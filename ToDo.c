@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 struct
 {
@@ -15,12 +17,18 @@ struct
     TNodo *Siguiente; // Mi nodo apunta al siguiente elemento de la lista
 } typedef TNodo;
 
+int id()
+{
+    static int id = 1000;
+    return id++;
+}
+
 TNodo *CrearListaVacia()
 {
     return NULL;
 }
 
-TNodo *CrearNodo(Tarea *T, int ID, char *Descripcion, int Duracion)
+TNodo *CrearNodo(int ID, char *Descripcion, int Duracion)
 { // Creamos el nodo de la lista enlazada
     TNodo *NNodo = (TNodo *)malloc(sizeof(TNodo));
     NNodo->T.TareaId = ID;
@@ -36,6 +44,28 @@ void InsertarNodo(TNodo **Star, TNodo *Nodo)
 { // Insertamos al inicio de la lista en manera de stack
     Nodo->Siguiente = *Star;
     *Star = Nodo;
+}
+
+void CrearTarea(TNodo *Star){
+    char continuar;
+    char descripcion[100];
+    int duracion = 0;
+    do{
+        printf("Ingrese los datos de la tarea \n");
+        printf("Descripcion : ");
+        gets(descripcion);
+        fflush(stdin);
+        printf("Ingrese una duracion entre 10 y 100: ");
+        scanf("%d", &duracion);
+        fflush(descripcion);
+        InsertarNodo(Star,CrearNodo(id(),descripcion, duracion ));
+        printf("---------------------------------");
+        printf("¿Desea agregar otra tarea?");
+        scanf("%c", continuar);
+        fflush(stdin);
+        
+    } while (continuar == 'n' || continuar == 'N');
+    
 }
 
 TNodo *buscarNodo(TNodo *Star, int ID)
@@ -63,6 +93,20 @@ TNodo *QuitarNodo(TNodo *Star, Tarea dato)
         return temp;
     }
     return NULL;
+}
+void MostarTarea(TNodo *nodo){
+    printf("\n");
+    printf("Id de la tarea: %d \n", nodo->T.TareaId);
+    printf("Descripcion: \n ");
+    puts(nodo->T.Descripcion);
+    printf("Duracion de la tarea: %d \n", nodo->T.Duracion);
+    printf("Estado de la tarea: ");
+    if(nodo->T.Estado == 1)
+    {
+        printf("Realizada");
+    }else{
+        printf("Pendiente");
+    } 
 }
 
 void EliminarNodo(TNodo *nodo)
@@ -94,7 +138,7 @@ int main()
         {
         case 1:
             printf("A seleccionado \"Listar tareas\" \n");
-            
+            MostarTarea(Star);
             break;
         case 2:
             printf("A seleccionado \"Crear tareas\" \n");
