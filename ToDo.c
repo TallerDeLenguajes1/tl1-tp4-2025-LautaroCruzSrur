@@ -117,7 +117,8 @@ void EliminarNodo(TNodo *nodo)
 
 int main()
 {
-    TNodo *Star; // Mi nodo apunta al primer elemento de la lista
+    TNodo *Star;// Mi nodo apunta al primer elemento de la lista
+    TNodo *StarRealizadas; // Mi nodo apunta al primer elemento de la lista de realizadas
     Star = CrearListaVacia();
     int opciones = 0;
     // Interfaz
@@ -137,11 +138,22 @@ int main()
         switch (opciones)
         {
         case 1:
+        int subOpcion = 0;
             printf("A seleccionado \"Listar tareas\" \n");
+            printf("Porfavor eliga: \n 1 Mostrar todas las tareas \n 2 Mostrar las Tareas Pendientes \n 3 Mostrar las Tareas Realizadas\n");
+            scanf("%d", &subOpcion);
+            if(subOpcion == 1){
             MostarTarea(Star);
+            MostarTarea(StarRealizadas);
+            }else if(subOpcion == 2){
+                MostarTarea(Star);
+            }else{
+                MostarTarea(StarRealizadas);
+            }
             break;
         case 2:
             printf("A seleccionado \"Crear tareas\" \n");
+            CrearTarea(Star);
             break;
         case 3:
             printf("A seleccionado \"Cambiar estado\" \n");
