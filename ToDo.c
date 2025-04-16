@@ -46,11 +46,13 @@ void InsertarNodo(TNodo **Star, TNodo *Nodo)
     *Star = Nodo;
 }
 
-void CrearTarea(TNodo *Star){
+void CrearTarea(TNodo *Star)
+{
     char continuar;
     char descripcion[100];
     int duracion = 0;
-    do{
+    do
+    {
         printf("Ingrese los datos de la tarea \n");
         printf("Descripcion : ");
         gets(descripcion);
@@ -58,17 +60,25 @@ void CrearTarea(TNodo *Star){
         printf("Ingrese una duracion entre 10 y 100: ");
         scanf("%d", &duracion);
         fflush(descripcion);
-        InsertarNodo(Star,CrearNodo(id(),descripcion, duracion ));
+        InsertarNodo(Star, CrearNodo(id(), descripcion, duracion));
         printf("---------------------------------");
         printf("¿Desea agregar otra tarea?");
         scanf("%c", continuar);
         fflush(stdin);
-        
+
     } while (continuar == 'n' || continuar == 'N');
-    
 }
 
 TNodo *buscarNodo(TNodo *Star, int ID)
+{
+    TNodo *Aux = Star;
+    while (Aux && Aux->T.TareaId != ID)
+    {
+        Aux = Aux->Siguiente;
+    }
+    return Aux;
+}
+TNodo *buscarNodoPalabra(TNodo *Star, int ID)
 {
     TNodo *Aux = Star;
     while (Aux && Aux->T.TareaId != ID)
@@ -94,40 +104,46 @@ TNodo *QuitarNodo(TNodo *Star, int ID)
     }
     return NULL;
 }
-void MostarTareas(TNodo *nodo){
+void MostarTareas(TNodo *nodo)
+{
     TNodo *Aux = nodo;
-    while (Aux != NULL){
-    printf("\n");
-    printf("Id de la tarea: %d \n", Aux->T.TareaId);
-    printf("Descripcion: \n ");
-    puts(Aux->T.Descripcion);
-    printf("Duracion de la tarea: %d \n", Aux->T.Duracion);
-    printf("Estado de la tarea: ");
-    if(Aux->T.Estado == 1)
+    while (Aux != NULL)
     {
-        printf("Realizada");
-    }else{
-        printf("Pendiente");
-    } 
-    printf("-----------SIGUIENTE-------------");
-    Aux = Aux->Siguiente;
-    }   
+        printf("\n");
+        printf("Id de la tarea: %d \n", Aux->T.TareaId);
+        printf("Descripcion: \n ");
+        puts(Aux->T.Descripcion);
+        printf("Duracion de la tarea: %d \n", Aux->T.Duracion);
+        printf("Estado de la tarea: ");
+        if (Aux->T.Estado == 1)
+        {
+            printf("Realizada");
+        }
+        else
+        {
+            printf("Pendiente");
+        }
+        printf("-----------SIGUIENTE-------------");
+        Aux = Aux->Siguiente;
+    }
 }
-void MostarTarea(TNodo *Star , int ID){
-    TNodo *Aux = buscarNodo(Star , ID);
+void MostarTarea(TNodo *Star, int ID)
+{
+    TNodo *Aux = buscarNodo(Star, ID);
     printf("\n");
     printf("Id de la tarea: %d \n", Aux->T.TareaId);
     printf("Descripcion: \n ");
     puts(Aux->T.Descripcion);
     printf("Duracion de la tarea: %d \n", Aux->T.Duracion);
     printf("Estado de la tarea: ");
-    if(Aux->T.Estado == 1)
+    if (Aux->T.Estado == 1)
     {
         printf("Realizada");
-    }else{
+    }
+    else
+    {
         printf("Pendiente");
-    } 
-
+    }
 }
 
 void EliminarNodo(TNodo *nodo)
@@ -135,15 +151,16 @@ void EliminarNodo(TNodo *nodo)
     if (nodo)
         free(nodo);
 }
-void CambiarEstado(TNodo *Star, TNodo *Star2, int ID){
-    TNodo *Aux = buscarNodo(Aux , ID);
-    InsertarNodo(Star2, Aux );
-    EliminarNodo(QuitarNodo(Star,ID));
-    printf("Tarea ID: %D , Fue Movida" , ID);
+void CambiarEstado(TNodo *Star, TNodo *Star2, int ID)
+{
+    TNodo *Aux = buscarNodo(Aux, ID);
+    InsertarNodo(Star2, Aux);
+    EliminarNodo(QuitarNodo(Star, ID));
+    printf("Tarea ID: %D , Fue Movida", ID);
 }
 int main()
 {
-    TNodo *Star;// Mi nodo apunta al primer elemento de la lista
+    TNodo *Star;           // Mi nodo apunta al primer elemento de la lista
     TNodo *StarRealizadas; // Mi nodo apunta al primer elemento de la lista de realizadas
     Star = CrearListaVacia();
     int opciones = 0;
@@ -164,16 +181,21 @@ int main()
         switch (opciones)
         {
         case 1:
-        int subOpcion = 0;
+            int subOpcion = 0;
             printf("A seleccionado \"Listar tareas\" \n");
             printf("Porfavor eliga: \n 1 Mostrar todas las tareas \n 2 Mostrar las Tareas Pendientes \n 3 Mostrar las Tareas Realizadas\n");
             scanf("%d", &subOpcion);
-            if(subOpcion == 1){
-            MostarTareas(Star);
-            MostarTareas(StarRealizadas);
-            }else if(subOpcion == 2){
+            if (subOpcion == 1)
+            {
                 MostarTareas(Star);
-            }else{
+                MostarTareas(StarRealizadas);
+            }
+            else if (subOpcion == 2)
+            {
+                MostarTareas(Star);
+            }
+            else
+            {
                 MostarTareas(StarRealizadas);
             }
             break;
@@ -186,16 +208,24 @@ int main()
             printf("A seleccionado \"Cambiar estado\" \n");
             printf("Porfavor Digite el ID de la Tarea\n");
             scanf("%d", &IDSeleccionado);
-            CambiarEstado(Star , StarRealizadas ,IDSeleccionado);
+            CambiarEstado(Star, StarRealizadas, IDSeleccionado);
             break;
         case 4:
-        int IDSeleccionado;
-        TNodo *Aux;
+            int IDSeleccionado;
+            TNodo *Aux;
             printf("A seleccionado \"Buscar tarea por ID\" \n");
             printf("Porfavor Digite el ID de la Tarea\n");
             scanf("%d", &IDSeleccionado);
-            
-            Aux = buscarNodo(Star ,IDSeleccionado);
+
+            Aux = buscarNodo(Star, IDSeleccionado);
+            if (!Aux)
+            {
+                Aux = buscarNodo(StarRealizadas, IDSeleccionado);
+            }
+            else
+            {
+                printf("Tarea no existente\n");
+            }
 
             break;
         case 5:
