@@ -11,11 +11,12 @@ struct
     int Estado;
 } typedef Tarea;
 
-struct
-{
-    Tarea T;          // Aputa a la tarea en la que se encuentra el nodo
-    TNodo *Siguiente; // Mi nodo apunta al siguiente elemento de la lista
-} typedef TNodo;
+struct TNodo {
+    Tarea T;
+    struct TNodo *Siguiente;
+};
+typedef struct TNodo TNodo;
+
 
 int id()
 {
@@ -48,25 +49,26 @@ void InsertarNodo(TNodo **Star, TNodo *Nodo)
 
 void CrearTarea(TNodo *Star)
 {
-    char continuar;
+    int continuar = 0;
     char descripcion[100];
     int duracion = 0;
     do
     {
+        fflush(stdin);
         printf("Ingrese los datos de la tarea \n");
         printf("Descripcion : ");
         gets(descripcion);
         fflush(stdin);
         printf("Ingrese una duracion entre 10 y 100: ");
-        scanf("%d", &duracion);
-        fflush(descripcion);
-        InsertarNodo(Star, CrearNodo(id(), descripcion, duracion));
-        printf("---------------------------------");
-        printf("¿Desea agregar otra tarea?");
-        scanf("%c", continuar);
+        scanf(" %d", &duracion);
+        TNodo *Aux = CrearNodo(id(), descripcion, duracion);
+        InsertarNodo(&Star, Aux);
+        printf("---------------------------------\n");
+        printf("¿Desea agregar otra tarea? 1:Si 2:No\n");
+        scanf(" %d", &continuar);
         fflush(stdin);
 
-    } while (continuar == 'n' || continuar == 'N');
+    } while (continuar == 1);
 }
 
 TNodo *buscarNodo(TNodo *Star, int ID)
@@ -78,10 +80,10 @@ TNodo *buscarNodo(TNodo *Star, int ID)
     }
     return Aux;
 }
-TNodo *buscarNodoPalabra(TNodo *Star, int ID)
+TNodo *buscarNodoPalabra(TNodo *Star, char *Palabra)
 {
     TNodo *Aux = Star;
-    while (Aux && Aux->T.TareaId != ID)
+    while (Aux && strstr(Aux->T.Descripcion, Palabra) == NULL)
     {
         Aux = Aux->Siguiente;
     }
@@ -90,7 +92,7 @@ TNodo *buscarNodoPalabra(TNodo *Star, int ID)
 
 TNodo *QuitarNodo(TNodo *Star, int ID)
 {
-    TNodo **aux = Star;
+    TNodo **aux = &Star;
     while (*aux != NULL && (*aux)->T.TareaId != ID)
     {
         aux = &(*aux)->Siguiente;
@@ -107,6 +109,10 @@ TNodo *QuitarNodo(TNodo *Star, int ID)
 void MostarTareas(TNodo *nodo)
 {
     TNodo *Aux = nodo;
+    if (Aux == NULL)
+    {
+       printf("No Hay Tareas\n");
+    }
     while (Aux != NULL)
     {
         printf("\n");
@@ -126,8 +132,10 @@ void MostarTareas(TNodo *nodo)
         printf("-----------SIGUIENTE-------------");
         Aux = Aux->Siguiente;
     }
+    
+    
 }
-void MostarTarea(TNodo *Star, int ID)
+void MostrarTarea(TNodo *Star, int ID)
 {
     TNodo *Aux = buscarNodo(Star, ID);
     printf("\n");
@@ -154,22 +162,23 @@ void EliminarNodo(TNodo *nodo)
 void CambiarEstado(TNodo *Star, TNodo *Star2, int ID)
 {
     TNodo *Aux = buscarNodo(Aux, ID);
-    InsertarNodo(Star2, Aux);
+    InsertarNodo(&Star2, Aux);
     EliminarNodo(QuitarNodo(Star, ID));
-    printf("Tarea ID: %D , Fue Movida", ID);
+    printf("Tarea ID: %d , Fue Movida", ID);
 }
 int main()
 {
     TNodo *Star;           // Mi nodo apunta al primer elemento de la lista
     TNodo *StarRealizadas; // Mi nodo apunta al primer elemento de la lista de realizadas
     Star = CrearListaVacia();
+    StarRealizadas = CrearListaVacia();
     int opciones = 0;
     // Interfaz
     while (opciones != 6)
     {
-        printf("---------------------------------");
-        printf("\n-----------Bienvenido-----------\n");
-        printf("---------------------------------");
+        printf("---------------------------------\n");
+        printf("-----------Bienvenido-----------\n");
+        printf("---------------------------------\n");
         printf("Digite una de las siguentes opciones\n");
         printf("1 Listar tareas\n");
         printf("2 Crear tarea\n");
@@ -180,8 +189,11 @@ int main()
         scanf("%d", &opciones);
         switch (opciones)
         {
-        case 1:
-            int subOpcion = 0;
+        case 1:{
+            int continuar;
+           do
+            {
+                int subOpcion = 0;
             printf("A seleccionado \"Listar tareas\" \n");
             printf("Porfavor eliga: \n 1 Mostrar todas las tareas \n 2 Mostrar las Tareas Pendientes \n 3 Mostrar las Tareas Realizadas\n");
             scanf("%d", &subOpcion);
@@ -198,19 +210,25 @@ int main()
             {
                 MostarTareas(StarRealizadas);
             }
+            printf("¿Desea salir? 1: SI 2: NO\n");
+            scanf(" %d",&continuar);
+
+            }while (continuar != 1);
             break;
+        }
         case 2:
             printf("A seleccionado \"Crear tareas\" \n");
             CrearTarea(Star);
             break;
-        case 3:
+        case 3:{
             int IDSeleccionado;
             printf("A seleccionado \"Cambiar estado\" \n");
             printf("Porfavor Digite el ID de la Tarea\n");
             scanf("%d", &IDSeleccionado);
             CambiarEstado(Star, StarRealizadas, IDSeleccionado);
             break;
-        case 4:
+        }
+        case 4:{
             int IDSeleccionado;
             TNodo *Aux;
             printf("A seleccionado \"Buscar tarea por ID\" \n");
@@ -226,23 +244,36 @@ int main()
             {
                 printf("Tarea no existente\n");
             }
+        }
 
             break;
-        case 5:
+        case 5:{
+            TNodo * Aux;
+            char Palabra[20];
             printf("A seleccionado \"Buscar tarea por palabra clave\" \n");
-            break;
-        case 6:
-            char sn;
-            printf("A seleccionado \"Salir\" \n");
-            printf("¿Esta seguro? (s/n)\n");
-            scanf("%c", &sn);
-            if (sn == 's' || sn == 'S')
-            {
-                opciones = 6;
+            printf("Porfavor ingese la palabra");
+            gets(Palabra);
+            Aux = buscarNodoPalabra(Star , Palabra);
+            if (Aux != NULL) {
+            int ID = Aux->T.TareaId;
+                MostrarTarea(Aux, ID);
+            } else {
+                printf("No se encontró ninguna tarea con esa palabra clave.\n");
             }
             break;
-        default:
-            break;
+        }
+        case 6:{
+        int continuar;
+        printf("Ha seleccionado \"Salir\" \n");
+        printf("¿Está seguro? 1:Si 2:No \n");
+        scanf(" %d", &continuar);
+        if (continuar != 1) {
+            opciones = 6;
+            printf("\nADIOS");
+        }
+        break;
+    }
+        
         }
     }
 
