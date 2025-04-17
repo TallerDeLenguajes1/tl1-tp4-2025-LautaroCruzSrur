@@ -43,7 +43,7 @@ TNodo *CrearNodo(int ID, char *Descripcion, int Duracion)
 
 void InsertarNodo(TNodo **Start, TNodo *Nodo);
 
-void CrearTarea(TNodo *Start);
+void CrearTarea(TNodo **Start);
 
 TNodo *buscarNodo(TNodo *Start, int ID)
 {
@@ -137,7 +137,7 @@ int main()
         }
         case 2:
             printf("A seleccionado \"Crear tareas\" \n");
-            CrearTarea(Start);
+            CrearTarea(&Start);
             break;
         case 3:
         {
@@ -213,20 +213,21 @@ void InsertarNodo(TNodo **Start, TNodo *Nodo)
     printf("Nodo insertado");
 }
 
-void CrearTarea(TNodo *Start)
+void CrearTarea(TNodo **Start)
 {
     int continuar = 0;
     char descripcion[100];
     int duracion = 0;
     do
     {
+        fflush(stdin);
         printf("Ingrese los datos de la tarea \n");
         printf("Descripcion : ");
         gets(descripcion); // fgets
         printf("Ingrese una duracion entre 10 y 100: ");
         scanf(" %d", &duracion);
         TNodo *Aux = CrearNodo(id(), descripcion, duracion);
-        InsertarNodo(&Start, Aux);
+        InsertarNodo(Start, Aux);
         printf("---------------------------------\n");
         printf("¿Desea agregar otra tarea? 1:Si 2:No\n");
         scanf(" %d", &continuar);
