@@ -29,11 +29,11 @@ TNodo *CrearListaVacia()
     return NULL;
 }
 
-TNodo *CrearNodo(int ID, char *Descripcion, int Duracion)
+TNodo *CrearNodo(int ID, char *descripcion, int Duracion)
 { // Creamos el nodo de la lista enlazada
     TNodo *NNodo = (TNodo *)malloc(sizeof(TNodo));
     NNodo->T.TareaId = ID;
-    NNodo->T.Descripcion = Descripcion;
+    NNodo->T.Descripcion = descripcion;
     NNodo->T.Duracion = Duracion;
     NNodo->T.Estado = 0;
     NNodo->Siguiente = NULL;
@@ -64,9 +64,9 @@ TNodo *buscarNodoPalabra(TNodo *Start, char *Palabra)
     return Aux;
 }
 
-TNodo *QuitarNodo(TNodo *Start, int ID)
+TNodo *QuitarNodo(TNodo **Start, int ID)
 {
-    TNodo **aux = &Start;
+    TNodo **aux = Start;
     while (*aux != NULL && (*aux)->T.TareaId != ID)
     {
         aux = &(*aux)->Siguiente;
@@ -83,7 +83,7 @@ TNodo *QuitarNodo(TNodo *Start, int ID)
 void MostrarTareas(TNodo **nodo);
 void MostrarTarea(TNodo *Start, int ID);
 void EliminarNodo(TNodo *nodo);
-void CambiarEstado(TNodo *Start, TNodo *Start2, int ID);
+void CambiarEstado(TNodo **Start, TNodo **Start2, int ID);
 int main()
 {
     TNodo *Start;           // Mi nodo apunta al primer elemento de la lista
@@ -145,7 +145,7 @@ int main()
             printf("A seleccionado \"Cambiar estado\" \n");
             printf("Porfavor Digite el ID de la Tarea\n");
             scanf("%d", &IDSeleccionado);
-            CambiarEstado(Start, StartRealizadas, IDSeleccionado);
+            CambiarEstado(&Start, &StartRealizadas, IDSeleccionado);
             break;
         }
         case 4:
@@ -224,8 +224,10 @@ void CrearTarea(TNodo **Start)
         printf("Ingrese los datos de la tarea \n");
         printf("Descripcion : ");
         gets(descripcion); // fgets
+        fflush(stdin);
         printf("Ingrese una duracion entre 10 y 100: ");
         scanf(" %d", &duracion);
+        fflush(stdin);
         TNodo *Aux = CrearNodo(id(), descripcion, duracion);
         InsertarNodo(Start, Aux);
         printf("---------------------------------\n");
@@ -254,10 +256,10 @@ void MostrarTareas(TNodo **nodo)
         {
             printf("Pendiente");
         }
-        printf("-----------SIGUIENTE-------------");
+        printf("\n-----------SIGUIENTE-------------\n");
         Aux = Aux->Siguiente;
     }
-    printf("Fin de las tareas\n");
+    printf("\nFin de las tareas\n");
 }
 void MostrarTarea(TNodo *Start, int ID)
 {
@@ -283,10 +285,17 @@ void EliminarNodo(TNodo *nodo)
     if (nodo)
         free(nodo);
 }
-void CambiarEstado(TNodo *Start, TNodo *Start2, int ID)
+void CambiarEstado(TNodo **Start, TNodo **Start2, int ID)
 {
-    TNodo *Aux = buscarNodo(Aux, ID);
-    InsertarNodo(&Start2, Aux);
-    EliminarNodo(QuitarNodo(Start, ID));
-    printf("Tarea ID: %d , Fue Movida", ID);
+    TNodo *Aux = *Start;
+    if (Aux)
+    {
+        InsertarNodo(Start2, buscarNodo(Aux, ID));
+        EliminarNodo(QuitarNodo(Start, ID));
+        printf("Tarea ID: %d , Fue Movida", ID);
+    }
+    else
+    {
+        printf("Tarea no %d no existe", ID);
+    }
 }
