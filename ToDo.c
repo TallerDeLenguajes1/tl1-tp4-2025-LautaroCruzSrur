@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
 
 struct
@@ -95,7 +96,7 @@ int main()
     // Interfaz
     while (opciones != 6)
     {
-        printf("---------------------------------\n");
+        printf("\n---------------------------------\n");
         printf("-----------Bienvenido-----------\n");
         printf("---------------------------------\n");
         printf("Digite una de las siguentes opciones\n");
@@ -173,9 +174,11 @@ int main()
         {
             TNodo *Aux;
             char Palabra[20];
+            fflush(stdin);
             printf("A seleccionado \"Buscar tarea por palabra clave\" \n");
-            printf("Porfavor ingese la palabra");
+            printf("Porfavor ingrese la palabra :  ");
             gets(Palabra);
+            fflush(stdin);
             Aux = buscarNodoPalabra(Start, Palabra);
             if (Aux != NULL)
             {
