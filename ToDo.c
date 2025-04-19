@@ -33,7 +33,8 @@ TNodo *CrearNodo(int ID, char *descripcion, int Duracion)
 { // Creamos el nodo de la lista enlazada
     TNodo *NNodo = (TNodo *)malloc(sizeof(TNodo));
     NNodo->T.TareaId = ID;
-    NNodo->T.Descripcion = descripcion;
+    NNodo->T.Descripcion = (char *)malloc(strlen(descripcion) + 1);
+    strcpy(NNodo->T.Descripcion, descripcion);
     NNodo->T.Duracion = Duracion;
     NNodo->T.Estado = 0;
     NNodo->Siguiente = NULL;
@@ -216,7 +217,8 @@ void InsertarNodo(TNodo **Start, TNodo *Nodo)
 void CrearTarea(TNodo **Start)
 {
     int continuar = 0;
-    char descripcion[100];
+    char descripcion[200];
+
     int duracion = 0;
     do
     {
@@ -287,11 +289,10 @@ void EliminarNodo(TNodo *nodo)
 }
 void CambiarEstado(TNodo **Start, TNodo **Start2, int ID)
 {
-    TNodo *Aux = *Start;
-    if (Aux)
+    TNodo *NodoAMover = QuitarNodo(Start, ID);
+    if (NodoAMover)
     {
-        InsertarNodo(Start2, buscarNodo(Aux, ID));
-        EliminarNodo(QuitarNodo(Start, ID));
+        InsertarNodo(Start2, NodoAMover);
         printf("Tarea ID: %d , Fue Movida", ID);
     }
     else
