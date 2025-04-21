@@ -43,7 +43,7 @@ TNodo *CrearNodo(int ID, char *descripcion, int Duracion)
     return NNodo;
 }
 
-void InsertarNodo(TNodo **Start, TNodo *Nodo);
+void InsertarNodoAlFinal(TNodo **Start, TNodo *Nodo);
 
 void CrearTarea(TNodo **Start);
 
@@ -210,11 +210,28 @@ int main()
     return 0;
 }
 
-void InsertarNodo(TNodo **Start, TNodo *Nodo) // star es la cabezera y nodo es el que insertamos
-{                                             // Insertamos al inicio de la lista en manera de stack
-    Nodo->Siguiente = *Start;                 // Hacemos que el sigiente de nodo(el que insertamos) apunte a la cabezera
-    *Start = Nodo;                            // Y Hacemos que la cabezera se convierta en el nodo que insertamos
-    printf("Nodo insertado");
+void InsertarNodoAlFinal(TNodo **Start, TNodo *Nodo)
+{
+    TNodo *NuevoNodo = Nodo;
+    NuevoNodo->Siguiente = NULL; // Aseguramos que el nuevo nodo no apunte a basura
+
+    if (*Start == NULL)
+    {
+        // Lista vacía: el nuevo nodo será la cabeza
+        *Start = NuevoNodo;
+    }
+    else
+    {
+        // Lista no vacía: recorrer hasta el final
+        TNodo *Aux = *Start;
+        while (Aux->Siguiente != NULL)
+        {
+            Aux = Aux->Siguiente;
+        }
+        Aux->Siguiente = NuevoNodo;
+    }
+
+    printf("Nodo insertado\n");
 } // Esta funcion inserta los nodos al inicio de la lista(...5,4,3,2,1,0)
 
 void CrearTarea(TNodo **Start)
@@ -231,10 +248,10 @@ void CrearTarea(TNodo **Start)
         gets(descripcion); // fgets
         fflush(stdin);
         printf("Ingrese una duracion entre 10 y 100: ");
-        scanf(" %d", &duracion);
+        scanf("%d", &duracion);
         fflush(stdin);
         TNodo *Aux = CrearNodo(id(), descripcion, duracion); // Creamos un nodo para poder insertarlo
-        InsertarNodo(Start, Aux);                            // Utilizamos la funcion insertar Nodo
+        InsertarNodoAlFinal(Start, Aux);                     // Utilizamos la funcion insertar Nodo
         printf("---------------------------------\n");
         printf("¿Desea agregar otra tarea? 1:Si 2:No\n");
         scanf(" %d", &continuar);
@@ -295,7 +312,7 @@ void CambiarEstado(TNodo **Start, TNodo **Start2, int ID)
     TNodo *NodoAMover = QuitarNodo(Start, ID); // Buscamos el nodo que necesitamos mover
     if (NodoAMover)                            // Si existe
     {
-        InsertarNodo(Start2, NodoAMover); // Lo incertamos en la nueva lista
+        InsertarNodoAlFinal(Start2, NodoAMover); // Lo incertamos en la nueva lista
         printf("Tarea ID: %d , Fue Movida", ID);
     }
     else
